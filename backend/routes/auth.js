@@ -15,17 +15,19 @@ router.post('/createuser', [
     body('password', 'password length too short').isLength({ min: 5 })
 ], async (req, res) => {
 
+    let success=false;
+
     // if there are errors then return bad request and errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({success, errors: errors.array() });
     }
 
     try {
         // CHECK WEATHER THE EMAIL IS REGISTERED ALREADY, as it is a promise so we are using await infront of it
         let user = await User.findOne({ email: req.body.email })
         if (user) {
-            return res.status(400).json({ error: "Sorry a user with this email already exists" });
+            return res.status(400).json({success, error: "Sorry a user with this email already exists" });
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -48,12 +50,12 @@ router.post('/createuser', [
 
 
         // res.json(user);
-
-        res.json({ authToken });
+        success=true;
+        res.json({success, authToken });
 
     } catch (error) {
         console.error(error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).send(success,"Internal Server Error");
     }
 })
 
@@ -62,24 +64,24 @@ router.post('/login', [
     body('email', 'enter a valid email').isEmail(),
     body('password', 'Password cannot be blank').exists()
 ], async (req, res) => {
+    let success=false;
 
     // if there are errors then return bad request and errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({success, errors: errors.array() });
     }
 
     const { email, password } = req.body;
-
     try {
         let user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ error: "User or Password Inalid" });
+            return res.status(400).json({success, error: "User or Password Inalid" });
         }
 
         const passwordCompare = await bcrypt.compare(password, user.password);
         if (!passwordCompare) {
-            return res.status(400).json({ error: "User or Password Inalid" });
+            return res.status(400).json({success, error: "User or Password Inalid" });
         }
 
         const payload = {
@@ -89,11 +91,12 @@ router.post('/login', [
         }
 
         const authToken = jwt.sign(payload, JWT_SECRET);
-        res.json({ authToken });
+        success=true;
+        res.json({ success,authToken });
 
     } catch (error) {
         console.error(error.message);
-        res.status(500).send("Internal Server Error");
+        res.status(500).send(success,"Internal Server Error");
     }
 
 })

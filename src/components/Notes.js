@@ -1,46 +1,54 @@
-import React, { useContext, useEffect, useRef,useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import noteContext from '../context/notes/noteContext';
 import NoteItem from './NoteItem';
 import AddNote from './AddNote';
+import { useNavigate } from 'react-router-dom';
 
 
-const Notes = () => {
-
+const Notes = (props) => {
+    let navigate=useNavigate();
     // fetching the initial values of notes
     const context = useContext(noteContext);
     const { notes, getNotes, editNote } = context;
     useEffect(() => {
-        getNotes();
+        if (localStorage.getItem('token')) {
+            // console.log(localStorage.getItem('token'));
+            getNotes();
+        }else{
+            navigate("/Login");
+        }
+
         // eslint-disable-next-line 
     }, [])
 
-    const [note, setNote] = useState({id:"",etitle:"",edescription:"",etag:""})
+    const [note, setNote] = useState({ id: "", etitle: "", edescription: "", etag: "" })
 
     // for triggtreing the model we are using use refrence hook
     //  and updating
     const updateNote = (currentNote) => {
         ref.current.click()
         // ref.current means the the place where the refrence is pointing and then clicking on that place
-        setNote({id:currentNote._id,etitle:currentNote.title,edescription:currentNote.description,etag:currentNote.tag})
+        setNote({ id: currentNote._id, etitle: currentNote.title, edescription: currentNote.description, etag: currentNote.tag })
     }
     const ref = useRef(null)
     const refClose = useRef(null)
 
 
-    const handleClick=(e)=>{
-        editNote(note.id,note.etitle,note.edescription,note.etag);
+    const handleClick = (e) => {
+        editNote(note.id, note.etitle, note.edescription, note.etag);
         refClose.current.click()
+        props.showAlert("Updated Successfully", "success");
         // console.log(note);
     }
-    const onChange= (e)=>{
+    const onChange = (e) => {
         // note that the "..." represents the spread operator
         // now the following syntax means that the properties in the setnote will remain, 
         // but the properties written after that shold be added or overwrited
-        setNote({...note, [e.target.name]:e.target.value})
+        setNote({ ...note, [e.target.name]: e.target.value })
     }
     return (
         <>
-            <AddNote />
+            <AddNote showAlert={props.showAlert} />
             {/* ref={ref} means jo refrence hai woh iss button ko hold kr rha hai */}
             <button type="button" ref={ref} className="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Launch demo modal
@@ -57,7 +65,7 @@ const Notes = () => {
                             <form>
                                 <div className="mb-3">
                                     <label htmlFor="etitle" className="form-label">Title</label>
-                                    <input required type="text" className="form-control"  minLength={2} value={note.etitle} id="etitle" name="etitle" aria-describedby="emailHelp" onChange={onChange} />
+                                    <input required type="text" className="form-control" minLength={2} value={note.etitle} id="etitle" name="etitle" aria-describedby="emailHelp" onChange={onChange} />
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="edescription" className="form-label">Description</label>
@@ -71,7 +79,7 @@ const Notes = () => {
                         </div>
                         <div className="modal-footer">
                             <button ref={refClose} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button disabled={note.etitle.length<2 || note.edescription.length<5 || note.etag.length<5} type="button" className="btn btn-primary" onClick={handleClick} >Update Note</button>
+                            <button disabled={note.etitle.length < 2 || note.edescription.length < 5 || note.etag.length < 5} type="button" className="btn btn-primary" onClick={handleClick} >Update Note</button>
                         </div>
                     </div>
                 </div>
@@ -79,10 +87,10 @@ const Notes = () => {
             <div className='row my-3'>
                 <h2>Your Notes</h2>
                 <div className="container mx-2">
-                {notes.length===0 && 'No Notes to Display'}
+                    {notes.length === 0 && 'No Notes to Display'}
                 </div>
                 {notes.map((notes) => {
-                    return <NoteItem key={notes._id} updateNote={updateNote} note={notes} />
+                    return <NoteItem key={notes._id} showAlert={props.showAlert} updateNote={updateNote} note={notes} />
                 })}
             </div>
         </>

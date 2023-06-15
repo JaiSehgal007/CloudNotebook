@@ -1,11 +1,15 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {Link} from "react-router-dom";
 
 
 const Navbar = () => {
+    const navigate=useNavigate();
     let location=useLocation();
-
+    const handleLogout=()=>{
+        localStorage.removeItem('token');
+        navigate("/Login");
+    }
     // A good example to learn useeffect, look that here location is sent as the 
     // parameter, so on the change of the value of loaction the useeffect body gets 
     // executed again
@@ -30,10 +34,10 @@ const Navbar = () => {
                                 <Link className={`nav-link ${location.pathname==="/about"?'active':""}`} to="/about">About</Link>
                             </li>
                         </ul>
-                        <form className="d-flex" role="search">
-                            <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-                                <button className="btn btn-outline-primary" type="submit">Search</button>
-                        </form>
+                        {!localStorage.getItem('token')? <form className="d-flex" role="search">
+                                <Link className="btn mx-1 btn-primary mx-2" to="/Login" role="button">Login</Link>
+                                <Link className="btn mx-1 btn-primary mx-2" to="/Signup" role="button">Sign up</Link>
+                        </form>: <button className="btn btn-primary" onClick={handleLogout}>Logout</button> }
                     </div>
                 </div>
             </nav>
