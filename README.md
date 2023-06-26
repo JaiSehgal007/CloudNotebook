@@ -44,4 +44,4 @@ The backend repository of Cloud Notebook lies in the server folder of the master
 ## Technology Stack:
 - React for the frontend
 - Node/Express for the backend
-- MongoDB and Firebase services for the database
+- MongoDB and Firebase for the database
