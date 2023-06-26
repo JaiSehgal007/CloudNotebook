@@ -38,7 +38,7 @@ The app facilitates the easy maintenance of user's notes on a cloud platform, en
 
 
 ## Backend Repository:
-The backend repository of Cloud Notebook lies in the server folder of the master branch
+The backend repository of Cloud Notebook lies in the backend folder of the master branch
 
 
 ## Technology Stack:
