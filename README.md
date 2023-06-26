@@ -1,4 +1,4 @@
-# Moo - Your Doorstep Dairy
+# Cloud Notebook
 
 This is the GitHub repository for the MERN stack and Firebase "Cloud Notebook" project.
 
