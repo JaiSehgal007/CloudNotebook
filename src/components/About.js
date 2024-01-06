@@ -6,8 +6,8 @@ import React from 'react';
 
 const About = () => {    
     return (
-        <div>
-            This is about page
+        <div style={{alignItems:'center',justifyContent:'center'}}>
+            This Cloud Notebook app is created by Jai Sehgal
         </div>
     );
 }
